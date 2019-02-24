@@ -1,0 +1,121 @@
+body {
+  font-size: 16px;
+  color: #373737;
+  background-color: #F4F4F4;
+  font-family: sans-serif;
+}
+
+/** HEADER **/
+#header-nav {
+  background-color: #C0B283;
+  border-radius: 0;
+  border: 0;
+}
+
+#logo-img {
+  color: #373737;
+  width: 58px;
+  height: 58px;
+  margin: 10px 15px 10px 0;
+  font-size: 58px;
+}
+
+.navbar-brand {
+  padding-top: 25px;
+}
+
+.navbar-brand h1 {
+  color: #373737;
+  font-size: 1.5em;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px#DCD0C0;
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: .75;
+}
+
+.navbar-brand a:hover, .navbar-brand a:focus {
+  text-decoration: none;
+}
+
+#nav-list {
+  margin-top: 10px;
+}
+
+#nav-list a {
+  color: #373737;
+  text-shadow: 1px 1px 1px#DCD0C0;
+  text-align: center;
+}
+
+#nav-list a span {
+  font-size: 1.5em;
+}
+
+#phone a {
+  text-align: right;
+  padding-bottom: 0;
+}
+/* END HEADER */
+
+/* FOOTER */
+.panel-footer {
+  color: #F4F4F4;
+  margin-top: 30px;
+  padding-top: 35px;
+  padding-bottom: 30px;
+  background-color: #373737;
+  border-top: 0;
+}
+/* END FOOTER */
+
+/* HOME PAGE */
+.table tr td img {
+  max-width: 320px;
+}
+
+.sub-header {
+  font-size: 1.75em;
+}
+/* END HOME PAGE */
+
+/********** Extra small devices only **********/
+@media (max-width: 767px) {
+  /* Header */
+  .navbar-brand {
+    padding-top: 10px;
+    height: 80px;
+  }
+  .navbar-brand h1 {
+    padding-top: 10px;
+    font-size: 5vw;
+  }
+  #collapsable-nav a {
+    font-size: 1.2em;
+  }
+  #collapsable-nav a span {
+    font-size: 1em;
+    margin-right: 5px;
+  }
+  #call-btn>a {
+    font-size: 1.5em;
+    display: block;
+    margin: 0 20px;
+    padding: 10px;
+    border: 2px solid #DCD0C0;
+    background-color: #C0B283;
+    color: #373737;
+  }
+  /* End Header */
+}
+
+/********** Super extra small devices Only :-) (e.g., iPhone 4) **********/
+@media (max-width: 479px) {
+  /* Header */
+  .navbar-brand h1 {
+    padding-top: 5px;
+    font-size: 6vw;
+  }
+  /* End Header */
+}
