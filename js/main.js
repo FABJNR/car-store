@@ -20,6 +20,7 @@
         if (app.validate()) {
           var $tableCar = $('[data-js="table-car"]').get();
           $tableCar.appendChild(app.createNewCar());
+          app.applyCarEvents();
           app.clearForm();
         }
       },
@@ -115,6 +116,8 @@
         var $tdYear = app.createTableData();
         var $tdLicensePlate = app.createTableData();
         var $tdColor = app.createTableData();
+        var $tdRemove = app.createTableData();
+        var $buttonRemove = app.configureRemoveButton();
 
         $image.src = $carImage.value;
         $tdImage.appendChild($image);
@@ -122,14 +125,33 @@
         $tdYear.textContent = $carYear.value;
         $tdLicensePlate.textContent = $carLicensePlate.value;
         $tdColor.textContent = $carColor.value;
+        $tdRemove.appendChild($buttonRemove);
 
         $tr.appendChild($tdImage);
         $tr.appendChild($tdBrand);
         $tr.appendChild($tdYear);
         $tr.appendChild($tdLicensePlate);
         $tr.appendChild($tdColor);
+        $tr.appendChild($tdRemove);
 
         return $fragment.appendChild($tr);
+      },
+      applyCarEvents: function applyCarEvents() {
+        $('[data-js="btn-remove-car"]').on('click', app.removeCar);
+      },
+      configureRemoveButton: function configureRemoveButton() {
+        var $button = app.createButton();
+        $button.type = 'button';
+        $button.textContent = 'Remover';
+        $button.setAttribute('class', 'btn btn-default');
+        $button.setAttribute('data-js', 'btn-remove-car');
+
+        return $button;
+      },
+      removeCar: function removeCar(event) {
+        event.preventDefault();
+        var row = this.parentNode.parentNode;
+        row.parentNode.removeChild(row);
       },
       companyInfo: function companyInfo() {
         var ajax = new XMLHttpRequest();
@@ -145,6 +167,7 @@
         var $companyName = $('[data-js="company-name"]').get();
         var $companyPhone = $('[data-js="company-phone"]');
         var $companyPhoneLink = $('[data-js="company-phone-link"]');
+
         $companyName.textContent = data.name;
         $companyPhone.forEach(function (item) {
           item.textContent = data.phone;
@@ -170,6 +193,9 @@
       },
       createImage: function createImage() {
         return doc.createElement('img');
+      },
+      createButton: function createButton() {
+        return doc.createElement('button');
       }
     };
   })();
