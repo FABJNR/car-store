@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Car Store</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <nav id="header-nav" class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="index.html" class="pull-left visible-md visible-lg">
+            <div id="logo-img" alt="Logo image" class="fas fa-car"></div>
+          </a>
+
+          <div class="navbar-brand">
+            <a href="index.html">
+              <h1 data-js="company-name"></h1>
+            </a>
+          </div>
+        </div>
+
+        <div id="collapsable-nav" class="collapse navbar-collapse">
+          <ul id="nav-list" class="nav navbar-nav navbar-right">
+            <li id="phone" class="hidden-xs">
+              <a data-js="company-phone-link">
+                <span data-js="company-phone"></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div id="call-btn" class="visible-xs">
+    <a class="btn" data-js="company-phone-link">
+      <span class="fas fa-phone"></span>
+      <span data-js="company-phone"></span>
+    </a>
+  </div>
+
+  <div id="main-content" class="container">
+    <h2 class="sub-header">Cadastro de Veículos</h2>
+    <div role="alert" data-js="message-box"></div>
+    <form action="/" id="form" class="form-horizontal" data-js="form-register">
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label>Imagem do Carro</label>
+          <input type="url" class="form-control" placeholder="Imagem do Carro" data-js="image">
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <label>Marca / Modelo</label>
+          <input type="text" class="form-control" placeholder="Marca / Modelo" data-js="brand-model" />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-12 col-sm-4">
+          <label>Ano</label>
+          <input type="text" class="form-control" placeholder="Ano (aaaa)" data-js="year" maxlength="4" />
+        </div>
+        <div class="form-group clearfix visible-xs"></div>
+        <div class="col-xs-12 col-sm-4">
+          <label>Placa</label>
+          <input type="text" class="form-control" placeholder="Placa (ZZZ9999) ou (ZZZ-9999)" data-js="license-plate" maxlength="8" />
+        </div>
+        <div class="form-group clearfix visible-xs"></div>
+        <div class="col-xs-12 col-sm-4">
+          <label>Cor</label>
+          <input type="text" class="form-control" placeholder="Cor" data-js="color" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-default">Cadastrar</button>
+    </form>
+    <h2 class="sub-header">Veículos Cadastrados</h2>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Imagem do Carro</th>
+            <th>Marca / Modelo</th>
+            <th>Ano</th>
+            <th>Placa</th>
+            <th>Cor</th>
+          </tr>
+        </thead>
+        <tbody data-js="table-car">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="panel-footer">
+    <div class="container">
+      <div class="text-center">&copy; Copyright Car Store 2019</div>
+    </div>
+  </footer>
+
+  <script src="js/dom.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
