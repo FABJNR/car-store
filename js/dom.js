@@ -87,5 +87,29 @@
     return DOM.objectType(param) === '[object Null]' || DOM.objectType(param) === '[object Undefined]';
   };
 
+  DOM.createFragment = function createFragment() {
+    return doc.createDocumentFragment();
+  };
+
+  DOM.createParagraph = function createParagraph() {
+    return doc.createElement('p');
+  };
+
+  DOM.createTableRow = function createTableRow() {
+    return doc.createElement('tr');
+  };
+
+  DOM.createTableData = function createTableData() {
+    return doc.createElement('td');
+  };
+
+  DOM.createImage = function createImage() {
+    return doc.createElement('img');
+  };
+
+  DOM.createButton = function createButton() {
+    return doc.createElement('button');
+  };
+
   win.DOM = DOM;
 })(window, document);
