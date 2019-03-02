@@ -1,4 +1,4 @@
-(function (win, doc, $) {
+(function ($, messageBox, validation) {
   'use strict';
   var app = (function () {
     var $carImage = $('[data-js="image"]').get();
@@ -6,10 +6,12 @@
     var $carYear = $('[data-js="year"]').get();
     var $carLicensePlate = $('[data-js="license-plate"]').get();
     var $carColor = $('[data-js="color"]').get();
+    var $tableCar = $('[data-js="table-car"]').get();
 
     return {
       init: function init() {
         this.companyInfo();
+        this.loadCars();
         this.initEvents();
       },
       initEvents: function initEvents() {
@@ -18,11 +20,38 @@
       handleSubmit: function handleSubmit(event) {
         event.preventDefault();
         if (app.validate()) {
-          var $tableCar = $('[data-js="table-car"]').get();
-          $tableCar.appendChild(app.createNewCar());
-          app.applyCarEvents();
+          app.insertCar();
+          app.loadCars();
           app.clearForm();
         }
+      },
+      validate: function validate() {
+        var errors = [];
+
+        if (!$carImage.value)
+          errors.push('Imagem do carro deve ser preenchida.');
+        else if (!validation.isValidURL($carImage.value))
+          errors.push('Imagem do carro deve ser uma URL válida.');
+
+        if (!$carBrandModel.value)
+          errors.push('Marca / Modelo deve ser preenchido.');
+
+        if (!$carYear.value)
+          errors.push('Ano deve ser preenchido.');
+        else if (!validation.isValidYear($carYear.value))
+          errors.push('Ano deve ser um valor numérico com 4 dígitos.');
+
+        if (!$carLicensePlate.value)
+          errors.push('Placa deve ser preenchida.');
+        else if (!validation.isValidPlate($carLicensePlate.value))
+          errors.push('Placa deve estar no formato ZZZ9999 ou ZZZ-9999.');
+
+        if (!$carColor.value)
+          errors.push('Cor deve ser preenchida.');
+
+        messageBox.showMessageBoxError(errors);
+
+        return errors.length === 0;
       },
       clearForm: function clearForm() {
         $carImage.value = '';
@@ -31,100 +60,42 @@
         $carLicensePlate.value = '';
         $carColor.value = '';
       },
-      validate: function validate() {
-        var errors = [];
+      insertCar: function insertCar() {
+        var ajax = new XMLHttpRequest();
+        ajax.open('POST', 'http://localhost:3000/car');
+        ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        ajax.send('image=' + $carImage.value +
+          '&brandModel=' + $carBrandModel.value +
+          '&year=' + $carYear.value +
+          '&plate=' + $carLicensePlate.value +
+          '&color=' + $carColor.value);
 
-        if (!$carImage.value)
-          errors.push('Imagem do carro deve ser preenchida.');
-        else if (!app.isValidURL($carImage.value))
-          errors.push('Imagem do carro deve ser uma URL válida.');
-
-        if (!$carBrandModel.value)
-          errors.push('Marca / Modelo deve ser preenchido.');
-
-        if (!$carYear.value)
-          errors.push('Ano deve ser preenchido.');
-        else if (!app.isValidYear($carYear.value))
-          errors.push('Ano deve ser um valor numérico com 4 dígitos.');
-
-        if (!$carLicensePlate.value)
-          errors.push('Placa deve ser preenchida.');
-        else if (!app.isValidPlate($carLicensePlate.value))
-          errors.push('Placa deve estar no formato ZZZ9999 ou ZZZ-9999.');
-
-        if (!$carColor.value)
-          errors.push('Cor deve ser preenchida.');
-
-        app.showMessageBox(errors);
-
-        return errors.length === 0;
+        ajax.addEventListener('readystatechange', this.onInsertedCar, false);
       },
-      isValidURL: function isValidURL(url) {
-        var pattern = /(?:http|https):\/\/(?:\w+:{0,1}\w*)?(?:\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/g;
-        return pattern.test(url);
+      onInsertedCar: function onInsertedCar() {
+        if (!app.isReady.call(this))
+          return;
+
+        messageBox.showMessageBoxSuccess('Veículo cadastrado com sucesso!');
       },
-      isValidYear: function isValidYear(year) {
-        return /^\d{4}$/.test(year);
-      },
-      isValidPlate: function isValidPlate(plate) {
-        return /^[a-z]{3}\d{4}$|^[a-z]{3}-\d{4}$/i.test(plate);
-      },
-      showMessageBox: function showMessageBox(errors) {
-        var $messageBox = $('[data-js="message-box"]').get();
-
-        app.clearMessageBox($messageBox);
-
-        if (errors.length > 0)
-          return app.showMessageBoxError($messageBox, errors);
-
-        return app.showMessageBoxSuccess($messageBox);
-      },
-      showMessageBoxError: function showMessageBoxError(messageBox, errors) {
-        var $fragment = app.createFragment();
-
-        errors.forEach(function (error) {
-          var $paragraph = app.createParagraph();
-          $paragraph.textContent = error;
-          $fragment.appendChild($paragraph);
-        });
-
-        messageBox.setAttribute('class', 'alert alert-danger');
-
-        return messageBox.appendChild($fragment);
-      },
-      showMessageBoxSuccess: function showMessageBoxSuccess(messageBox) {
-        var $fragment = app.createFragment();
-        var $paragraph = app.createParagraph();
-
-        $paragraph.textContent = 'Veículo cadastrado com sucesso!';
-        $fragment.appendChild($paragraph);
-        messageBox.setAttribute('class', 'alert alert-success');
-
-        return messageBox.appendChild($fragment);
-      },
-      clearMessageBox: function clearMessageBox(messageBox) {
-        while (messageBox.hasChildNodes()) {
-          messageBox.removeChild(messageBox.lastChild);
-        }
-      },
-      createNewCar: function createNewCar() {
-        var $fragment = app.createFragment();
-        var $tr = app.createTableRow();
-        var $tdImage = app.createTableData();
-        var $image = app.createImage();
-        var $tdBrand = app.createTableData();
-        var $tdYear = app.createTableData();
-        var $tdLicensePlate = app.createTableData();
-        var $tdColor = app.createTableData();
-        var $tdRemove = app.createTableData();
+      createNewCar: function createNewCar(car) {
+        var $fragment = $.createFragment();
+        var $tr = $.createTableRow();
+        var $tdImage = $.createTableData();
+        var $image = $.createImage();
+        var $tdBrand = $.createTableData();
+        var $tdYear = $.createTableData();
+        var $tdLicensePlate = $.createTableData();
+        var $tdColor = $.createTableData();
+        var $tdRemove = $.createTableData();
         var $buttonRemove = app.configureRemoveButton();
 
-        $image.src = $carImage.value;
+        $image.src = car.image;
         $tdImage.appendChild($image);
-        $tdBrand.textContent = $carBrandModel.value;
-        $tdYear.textContent = $carYear.value;
-        $tdLicensePlate.textContent = $carLicensePlate.value;
-        $tdColor.textContent = $carColor.value;
+        $tdBrand.textContent = car.brandModel;
+        $tdYear.textContent = car.year;
+        $tdLicensePlate.textContent = car.plate;
+        $tdColor.textContent = car.color;
         $tdRemove.appendChild($buttonRemove);
 
         $tr.appendChild($tdImage);
@@ -140,7 +111,7 @@
         $('[data-js="btn-remove-car"]').on('click', app.removeCar);
       },
       configureRemoveButton: function configureRemoveButton() {
-        var $button = app.createButton();
+        var $button = $.createButton();
         $button.type = 'button';
         $button.textContent = 'Remover';
         $button.setAttribute('class', 'btn btn-default');
@@ -155,7 +126,7 @@
       },
       companyInfo: function companyInfo() {
         var ajax = new XMLHttpRequest();
-        ajax.open('GET', 'data/company.json', true);
+        ajax.open('GET', 'data/company.json');
         ajax.send(null);
         ajax.addEventListener('readystatechange', this.getCompanyInfo, false);
       },
@@ -176,29 +147,28 @@
           item.setAttribute('href', 'tel:' + data.phone);
         });
       },
+      loadCars: function loadCars() {
+        var ajax = new XMLHttpRequest();
+        ajax.open('GET', 'http://localhost:3000/car');
+        ajax.send(null);
+        ajax.addEventListener('readystatechange', this.getCars, false);
+      },
+      getCars: function getCars() {
+        if (!app.isReady.call(this))
+          return;
+
+        $tableCar.innerText = '';
+        var data = JSON.parse(this.responseText);
+        data.forEach(function (car) {
+          $tableCar.appendChild(app.createNewCar(car));
+        });
+        app.applyCarEvents();
+      },
       isReady: function isReady() {
         return this.readyState === 4 && this.status === 200;
-      },
-      createFragment: function createFragment() {
-        return doc.createDocumentFragment();
-      },
-      createParagraph: function createParagraph() {
-        return doc.createElement('p');
-      },
-      createTableRow: function createTableRow() {
-        return doc.createElement('tr');
-      },
-      createTableData: function createTableData() {
-        return doc.createElement('td');
-      },
-      createImage: function createImage() {
-        return doc.createElement('img');
-      },
-      createButton: function createButton() {
-        return doc.createElement('button');
       }
     };
   })();
 
   app.init();
-})(window, document, window.DOM);
+})(window.DOM, window.MessageBox, window.Validation);
