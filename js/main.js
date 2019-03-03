@@ -88,7 +88,7 @@
         var $tdLicensePlate = $.createTableData();
         var $tdColor = $.createTableData();
         var $tdRemove = $.createTableData();
-        var $buttonRemove = app.configureRemoveButton();
+        var $buttonRemove = app.configureRemoveButton(car.plate);
 
         $image.src = car.image;
         $tdImage.appendChild($image);
@@ -110,19 +110,30 @@
       applyCarEvents: function applyCarEvents() {
         $('[data-js="btn-remove-car"]').on('click', app.removeCar);
       },
-      configureRemoveButton: function configureRemoveButton() {
+      configureRemoveButton: function configureRemoveButton(plate) {
         var $button = $.createButton();
         $button.type = 'button';
         $button.textContent = 'Remover';
         $button.setAttribute('class', 'btn btn-default');
         $button.setAttribute('data-js', 'btn-remove-car');
+        $button.setAttribute('data-plate', plate);
 
         return $button;
       },
       removeCar: function removeCar(event) {
         event.preventDefault();
-        var row = this.parentNode.parentNode;
-        row.parentNode.removeChild(row);
+        var ajax = new XMLHttpRequest();
+        ajax.open('DELETE', 'http://localhost:3000/car');
+        ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        ajax.send('plate=' + this.getAttribute('data-plate'));
+        ajax.addEventListener('readystatechange', app.onRemovedCar, false);
+      },
+      onRemovedCar: function onRemovedCar() {
+        if (!app.isReady.call(this))
+          return;
+
+        messageBox.showMessageBoxSuccess('Veículo excluído com sucesso!');
+        app.loadCars();
       },
       companyInfo: function companyInfo() {
         var ajax = new XMLHttpRequest();
