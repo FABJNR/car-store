@@ -11,12 +11,12 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.json({ message: 'hi' });
 });
 
 app.use('/car', routes);
 
-app.listen(port, function() {
+app.listen(port, function () {
   console.log('Listening on port http://localhost:%d', port);
 });
